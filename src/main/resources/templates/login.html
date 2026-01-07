@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン</title>
+</head>
+<body>
+    <h1>ログイン</h1>
+
+    <form action="/login" method="post">
+        <div>
+            <label>Email</label>
+            <input type="email" name="email" required>
+        </div>
+
+        <div>
+            <label>Password</label>
+            <input type="password" name="password" required>
+        </div>
+
+        <button type="submit">ログイン</button>
+    </form>
+
+    <p style="color:red;">
+        <span th:text="${error}"></span>
+    </p>
+</body>
+</html>
