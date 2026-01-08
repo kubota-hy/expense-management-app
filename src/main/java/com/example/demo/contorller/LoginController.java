@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.demo.entity.UserEntity;
+import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import com.example.demo.util.Constants;
 
@@ -37,7 +37,7 @@ public class LoginController {
 			HttpSession session,
 			Model model) {
 		
-		UserEntity user = userService.login(email, password);
+		User user = userService.login(email, password);
 		
 		if(user == null) {
 			
@@ -46,7 +46,16 @@ public class LoginController {
 		}
 		
 		session.setAttribute("loginUser", user);
-		return "redirect :/travelCost";
+		
+		if("ADMIN".equals(user.getRole())) {
+			
+			return "redirect:/adminTravelCost";
+			
+		}else {
+			
+			return "redirect :/travelCost";
+			
+		}
 		
 	}
 
