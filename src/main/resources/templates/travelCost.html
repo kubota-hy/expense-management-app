@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>交通費申請</title>
+<style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 6px;
+        }
+        .error {
+            color: red;
+        }
+        .message {
+            color: green;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+	
+	<h2>交通費申請</h2>
+	
+	<div th:if="${message}" class="message" th:text="${message}"></div>
+	
+	<!-- ===== 申請フォーム ===== -->
+	<form th:action="@{/travelCost}" th:object="${expenseForm}" method="post">
+
+	    <div>
+	        <label>利用日</label>
+	        <input type="date" th:field="*{useDate}">
+	        <div class="error" th:errors="*{useDate}"></div>
+	    </div>
+
+	    <div>
+	        <label>内容</label>
+	        <input type="text" th:field="*{title}">
+	        <div class="error" th:errors="*{title}"></div>
+	    </div>
+
+	    <div>
+	        <label>金額</label>
+	        <input type="number" th:field="*{amount}">
+	        <div class="error" th:errors="*{amount}"></div>
+	    </div>
+
+	    <div>
+	        <label>備考</label>
+	        <textarea th:field="*{memo}"></textarea>
+	    </div>
+
+	    <button type="submit">申請</button>
+	</form>
+
+	<hr>
+
+	<!-- ===== 申請一覧 ===== -->
+	<h3>申請一覧</h3>
+
+	<table>
+	    <thead>
+	    <tr>
+	        <th>利用日</th>
+	        <th>内容</th>
+	        <th>金額</th>
+	        <th>ステータス</th>
+	    </tr>
+	    </thead>
+	    <tbody>
+	    <tr th:each="expense : ${expenseList}">
+	        <td th:text="${expense.useDate}"></td>
+	        <td th:text="${expense.title}"></td>
+	        <td th:text="${expense.amount}"></td>
+	        <td th:text="${expense.status}"></td>
+	    </tr>
+	    </tbody>
+	</table>
+
+</body>
+</html>

@@ -1,4 +1,6 @@
-package com.example.demo.contorller;
+package com.example.demo.controller;
+
+import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -9,7 +11,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.entity.Expense;
 import com.example.demo.entity.User;
 import com.example.demo.form.ExpenseForm;
 import com.example.demo.service.ExpenseService;
@@ -40,6 +44,9 @@ public class ExpenseController {
 			return "redirect:/login";
 
 		}
+		
+		List<Expense> expenseList = expenseService.findUserExpenses(loginUser);
+		model.addAttribute("expenseList",expenseList);
 		return "travelCost";
 	}
 
@@ -48,7 +55,7 @@ public class ExpenseController {
 			@Valid @ModelAttribute("expenseForm")ExpenseForm form,
 			BindingResult result,
 			HttpSession session,
-			Model model) {
+			RedirectAttributes ra) {
 
 		User loginUser = (User) session.getAttribute("loginUser");
 		if (loginUser == null) {
@@ -61,11 +68,9 @@ public class ExpenseController {
 
 		expenseService.createExpense(form, loginUser);
 
-		model.addAttribute("message",Constants.SUBMIT_EXPENSE);
+		ra.addFlashAttribute("message",Constants.SUBMIT_EXPENSE);
 
-		return "travelCost";
+		return "redirect:/travelCost";
 	}
-
-
-
+	
 }

@@ -1,4 +1,4 @@
-package com.example.demo.contorller;
+package com.example.demo.controller;
 
 import jakarta.servlet.http.HttpSession;
 

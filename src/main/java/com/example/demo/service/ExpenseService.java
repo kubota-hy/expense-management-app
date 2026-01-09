@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Expense;
@@ -28,6 +30,10 @@ public class ExpenseService {
 		expense.setNote(form.getNote());
 		
 		expenseRepository.save(expense);
+	}
+	
+	public List<Expense> findUserExpenses(User user){
+		return expenseRepository.findByUserOrderByUseDateDesc(user);
 	}
 
 }
