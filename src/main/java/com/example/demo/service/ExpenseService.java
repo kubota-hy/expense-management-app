@@ -18,22 +18,34 @@ public class ExpenseService {
 		this.expenseRepository = expenseRepository;
 	}
 	
-	public void createExpense(ExpenseForm form,User loginUser) {
-		
-		Expense expense = new Expense();
-		
-		expense.setUserId(loginUser.getId());
-		expense.setUseDate(form.getUseDate());
-		expense.setClaimType(form.getClaimType());
-		expense.setAmount(form.getAmount());
-		expense.setPurpose(form.getPurpose());
-		expense.setNote(form.getNote());
-		
-		expenseRepository.save(expense);
+	public void createExpense(ExpenseForm form, User loginUser) {
+
+	    Expense expense = new Expense();
+
+	    expense.setUserId(loginUser.getId());
+	    expense.setUseDate(form.getUseDate());
+	    expense.setClaimType(form.getClaimType());
+
+	    expense.setTransportation(form.getTransportation());
+	    expense.setFromPlace(form.getFromPlace());
+	    expense.setToPlace(form.getToPlace());
+	    expense.setTripType(form.getTripType());
+
+	    expense.setAmount(form.getAmount());
+	    expense.setPurpose(form.getPurpose());
+	    expense.setNote(form.getNote());
+
+	    expenseRepository.save(expense);
 	}
+
 	
 	public List<Expense> findUserExpenses(User user){
-		return expenseRepository.findByUserOrderByUseDateDesc(user);
+		return expenseRepository.findByUserIdOrderByUseDateDesc(user.getId());
+	}
+	
+	public List<Expense> findAllExpenses(){
+		
+		return expenseRepository.findAllByOrderBySubmittedAtDesc();
 	}
 
 }

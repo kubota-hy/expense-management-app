@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - 申請一覧</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      background: linear-gradient(135deg, #2c2f4a, #4b3b4f);
+      color: #fff;
+    }
+
+    .wrap {
+      width: min(1100px, 92vw);
+      margin: 40px auto;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      padding: 22px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 500;
+      margin: 0;
+      letter-spacing: .5px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .btn:hover { opacity: 0.9; }
+
+    .btn-primary {
+      background: #2ecc71;
+      border-color: transparent;
+      font-weight: 700;
+    }
+
+    .meta {
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 13px;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 12px 10px;
+      background: rgba(255,255,255,0.10);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+    }
+
+    tbody td {
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.92);
+      vertical-align: top;
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      white-space: nowrap;
+    }
+
+    .empty {
+      margin-top: 14px;
+      color: rgba(255,255,255,0.75);
+    }
+
+    /* 画面が狭いとき横スクロール */
+    .table-wrap { overflow-x: auto; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+
+      <div class="topbar">
+        <div>
+          <h1>申請一覧（管理者）</h1>
+          <div class="meta">
+            申請件数: <span th:text="${expenseList != null ? expenseList.size() : 0}"></span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a class="btn" href="/travelCost">USER画面へ</a>
+          <a class="btn btn-primary" href="/logout">ログアウト</a>
+        </div>
+      </div>
+
+      <div class="table-wrap" th:if="${expenseList != null and !expenseList.isEmpty()}">
+        <table>
+          <thead>
+            <tr>
+              <th>利用日</th>
+              <th>区分</th>
+              <th>交通手段</th>
+              <th>出発</th>
+              <th>到着</th>
+              <th>片/往</th>
+              <th>金額</th>
+              <th>目的</th>
+              <th>備考</th>
+              <th>ステータス</th>
+              <th>申請日時</th>
+              <th>ユーザID</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="e : ${expenseList}">
+              <td th:text="${e.useDate}"></td>
+              <td th:text="${e.claimType}"></td>
+              <td th:text="${e.transportation}"></td>
+              <td th:text="${e.fromPlace}"></td>
+              <td th:text="${e.toPlace}"></td>
+              <td th:text="${e.tripType}"></td>
+              <td th:text="${e.amount}"></td>
+              <td th:text="${e.purpose}"></td>
+              <td th:text="${e.note}"></td>
+              <td><span class="status" th:text="${e.status}"></span></td>
+              <td th:text="${e.submittedAt}"></td>
+              <td th:text="${e.userId}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty" th:if="${expenseList == null or expenseList.isEmpty()}">
+        申請データがありません。
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

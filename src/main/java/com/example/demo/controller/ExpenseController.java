@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +24,9 @@ import com.example.demo.util.Constants;
 public class ExpenseController {
 
 	private final ExpenseService expenseService;
+	
+	@Autowired
+	private HttpSession session;
 
 	public ExpenseController(ExpenseService expenseService) {
 		this.expenseService=expenseService;
@@ -35,7 +39,7 @@ public class ExpenseController {
 	}
 
 	@GetMapping("/travelCost")
-	public String showTravelCost(Model model,HttpSession session) {
+	public String showTravelCost(Model model) {
 
 		//未ログインならログインへ
 		User loginUser = (User) session.getAttribute("loginUser");
@@ -54,7 +58,6 @@ public class ExpenseController {
 	public String submitTravelCost(
 			@Valid @ModelAttribute("expenseForm")ExpenseForm form,
 			BindingResult result,
-			HttpSession session,
 			RedirectAttributes ra) {
 
 		User loginUser = (User) session.getAttribute("loginUser");
@@ -72,5 +75,32 @@ public class ExpenseController {
 
 		return "redirect:/travelCost";
 	}
-	
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

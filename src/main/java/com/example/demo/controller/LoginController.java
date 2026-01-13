@@ -53,7 +53,7 @@ public class LoginController {
 			
 		}else {
 			
-			return "redirect :/travelCost";
+			return "redirect:/travelCost";
 			
 		}
 		
