@@ -79,7 +79,7 @@ public class LoginController {
 
 		// 権限に応じて遷移先を振り分け
 		if ("ADMIN".equals(user.getRole())) {
-			return "redirect:/adminTravelCost";
+			return "redirect:/top";
 		} else {
 			return "redirect:/travelCost";
 		}

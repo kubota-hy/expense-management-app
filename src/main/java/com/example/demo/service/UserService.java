@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.util.PasswordUtil;
 
 /**
  * ユーザーに関する業務処理を提供するサービスクラス。
@@ -56,8 +57,8 @@ public class UserService {
 
 		// パスワードが一致しない場合は認証失敗
 		// ※ 本来はハッシュ化した値で照合する想定（現状は簡易実装）
-		if (!user.getPasswordHash().equals(password)) {
-			return null;
+		if (!PasswordUtil.matches(password, user.getPasswordHash())) {
+		    return null;
 		}
 
 		// アカウントが無効の場合は認証失敗
