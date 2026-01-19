@@ -11,6 +11,8 @@ import com.example.demo.entity.User;
 import com.example.demo.form.AdminExpenseSearchForm;
 import com.example.demo.form.ExpenseForm;
 import com.example.demo.repository.ExpenseRepository;
+import com.example.demo.rules.Decision;
+import com.example.demo.rules.RuleEngine;
 import com.example.demo.util.Constants;
 
 /**
@@ -24,14 +26,17 @@ public class ExpenseService {
 
 	/** 交通費申請データへアクセスするリポジトリ */
 	private final ExpenseRepository expenseRepository;
+	
+	private final  RuleEngine ruleEngine;
 
 	/**
 	 * コンストラクタインジェクションによりリポジトリを受け取る。
 	 *
 	 * @param expenseRepository 交通費申請リポジトリ
 	 */
-	public ExpenseService(ExpenseRepository expenseRepository) {
+	public ExpenseService(RuleEngine ruleEngine,ExpenseRepository expenseRepository) {
 		this.expenseRepository = expenseRepository;
+		this.ruleEngine = ruleEngine;
 	}
 
 	/**
@@ -62,7 +67,14 @@ public class ExpenseService {
 		expense.setAmount(form.getAmount());
 		expense.setPurpose(form.getPurpose());
 		expense.setNote(form.getNote());
+		
+		Decision decision = ruleEngine.decide(expense);
 
+		switch (decision) {
+		    case APPROVE -> expense.setStatus("APPROVED");
+		    case NEED_REVIEW -> expense.setStatus("SUBMITTED"); // 要確認=申請中扱いにする（ミニ版）
+		    case REJECT -> expense.setStatus("REJECTED");       // 新しいステータス（Stringなので追加するだけでOK）
+		}
 		expenseRepository.save(expense);
 	}
 

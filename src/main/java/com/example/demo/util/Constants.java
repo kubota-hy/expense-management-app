@@ -6,7 +6,8 @@ public interface Constants {
 	public static final String ERROR02 = "申請が存在しません。";
 	public static final String ERROR03 = "パスワードが一致しません。";
 	public static final String ERROR04 = "メールアドレスは既に登録されています。";
-	public static final String SUBMIT_EXPENSE = "申請しました";
-
+	
+	public static final String SUBMIT_EXPENSE = "申請しました。";
+	public static final String REJISTER_USER = "ユーザーを登録しました。";
 
 }

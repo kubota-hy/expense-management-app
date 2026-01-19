@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - ユーザー新規登録</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      background: linear-gradient(135deg, #2c2f4a, #4b3b4f);
+      color: #fff;
+    }
+
+    .wrap {
+      width: min(900px, 92vw);
+      margin: 40px auto;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      padding: 22px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 500;
+      margin: 0;
+      letter-spacing: .5px;
+    }
+
+    .meta {
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .btn:hover { opacity: 0.9; }
+
+    .btn-primary {
+      background: #2ecc71;
+      border-color: transparent;
+      font-weight: 700;
+    }
+
+    .btn-danger {
+      background: #e74c3c;
+      border-color: transparent;
+      font-weight: 700;
+    }
+
+    .panel {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .input {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.12);
+      color: #fff;
+      outline: none;
+    }
+
+    .input::placeholder { color: rgba(255,255,255,0.45); }
+
+    .help {
+      color: rgba(255,255,255,0.65);
+      font-size: 12px;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .error-box {
+      margin-top: 12px;
+      border-radius: 12px;
+      padding: 12px 14px;
+      border: 1px solid rgba(231, 76, 60, 0.55);
+      background: rgba(231, 76, 60, 0.14);
+      color: rgba(255,255,255,0.95);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .field-error {
+      color: rgba(255, 210, 210, 0.95);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="card">
+
+    <div class="topbar">
+      <div>
+        <h1>ユーザー新規登録（管理者）</h1>
+        <div class="meta">
+          登録するユーザー権限：<span class="badge">USER（固定）</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <a class="btn" href="/top">管理者メニューへ</a>
+        <a class="btn btn-primary" href="/logout">ログアウト</a>
+      </div>
+    </div>
+
+    <!-- 全体エラー -->
+    <div class="error-box"
+         th:if="${globalError != null}"
+         th:text="${globalError}">
+    </div>
+
+    <!-- バリデーションエラー -->
+    <div class="error-box"
+         th:if="${#fields.hasGlobalErrors()}"
+         th:each="e : ${#fields.globalErrors()}"
+         th:text="${e}">
+    </div>
+
+    <div class="panel">
+      <form th:action="@{/admin/users}" method="post" th:object="${createForm}">
+        <div class="grid">
+
+          <div class="field" style="grid-column: 1 / -1;">
+            <label>氏名（必須）</label>
+            <input class="input" type="text" th:field="*{name}" placeholder="例：山田 太郎" />
+            <div class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+          </div>
+
+          <div class="field" style="grid-column: 1 / -1;">
+            <label>メールアドレス（必須）</label>
+            <input class="input" type="email" th:field="*{email}" placeholder="例：taro@example.com" />
+            <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            <div class="help">※ログインIDになります。既に登録済みのメールアドレスは使用できません。</div>
+          </div>
+
+          <div class="field">
+            <label>初期パスワード（必須）</label>
+            <input class="input" type="password" th:field="*{password}" placeholder="8〜72文字" />
+            <div class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+            <div class="help">※登録時にハッシュ化して保存します（入力内容はそのまま保存しません）。</div>
+          </div>
+
+          <div class="field">
+            <label>確認用パスワード（必須）</label>
+            <input class="input" type="password" th:field="*{passwordConfirm}" placeholder="もう一度入力" />
+            <div class="field-error" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+          </div>
+
+        </div>
+
+        <div class="footer-actions">
+          <a class="btn" href="/top">戻る</a>
+          <button class="btn btn-primary" type="submit">登録</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

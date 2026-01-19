@@ -6,13 +6,16 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.entity.User;
 import com.example.demo.form.AdminUserCreateForm;
 import com.example.demo.service.AdminUserService;
+import com.example.demo.util.Constants;
 
 @Controller
 @RequestMapping("/admin/users")
@@ -24,12 +27,24 @@ public class AdminUserController {
 		this.adminUserService  = adminUserService;
 	}
 	
+	@GetMapping("/new")
+	public String showCreate(HttpSession session,Model model) {
+		User loginUser = (User)session.getAttribute("loginUser");
+		if(loginUser == null || !"ADMIN".equals(loginUser.getRole())) {
+			return "redirect:/login";
+		}
+		
+		model.addAttribute("createForm",new AdminUserCreateForm());
+		return "adminUserNew";
+	}
+	
 	@PostMapping
 	public String create(
 	        @Valid @ModelAttribute("createForm") AdminUserCreateForm form,
 	        BindingResult bindingResult,
 	        HttpSession session,
-	        Model model) {
+	        Model model,
+	        RedirectAttributes ra) {
 
 	    User loginUser = (User) session.getAttribute("loginUser");
 	    if (loginUser == null || !"ADMIN".equals(loginUser.getRole())) {
@@ -41,14 +56,18 @@ public class AdminUserController {
 	    }
 
 	    try {
+	    	
 	        adminUserService.createUserByAdmin(form);
+	        
 	    } catch (IllegalArgumentException e) {
+	    	
 	        model.addAttribute("globalError", e.getMessage());
 	        return "adminUserNew";
+	        
 	    }
-
+	    
+	    ra.addFlashAttribute("flashMessage",Constants.REJISTER_USER);
 	    return "redirect:/top";
+	    
 	}
-	
-
 }
