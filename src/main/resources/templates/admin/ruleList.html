@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Rule Management</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      background: linear-gradient(135deg, #2c2f4a, #4b3b4f);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .card {
+      width: 900px;
+      padding: 32px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 400;
+      margin-bottom: 28px;
+      letter-spacing: 1px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      text-align: left;
+    }
+
+    th {
+      font-weight: 500;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .status-on {
+      color: #2ecc71;
+      font-weight: 600;
+    }
+
+    .status-off {
+      color: #ff6b6b;
+      font-weight: 600;
+    }
+
+    .toggle-btn {
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 20px;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .toggle-btn:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: right;
+    }
+
+    .back-link {
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>Rule Management</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ルール名</th>
+        <th>ルール内容</th>
+        <th>優先度</th>
+        <th>状態</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="rule : ${rules}">
+        <td th:text="${rule.name}"></td>
+        <td th:text="${rule.ruleText}"></td>
+        <td th:text="${rule.priority}"></td>
+
+        <td>
+          <span th:classappend="${rule.enabled} ? 'status-on' : 'status-off'"
+                th:text="${rule.enabled} ? '有効' : '無効'">
+          </span>
+        </td>
+
+        <td>
+          <form th:action="@{/admin/rules/toggle}" method="post">
+            <input type="hidden" name="ruleId" th:value="${rule.id}">
+            <button class="toggle-btn" type="submit"
+              th:text="${rule.enabled} ? '無効にする' : '有効にする'">
+            </button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="footer">
+    <a class="back-link" th:href="@{/adminTravelCost}">
+      ← 管理者申請一覧へ戻る
+    </a>
+  </div>
+
+</div>
+
+</body>
+</html>

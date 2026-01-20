@@ -15,6 +15,7 @@ import com.example.demo.entity.Expense;
 import com.example.demo.entity.User;
 import com.example.demo.form.AdminExpenseSearchForm;
 import com.example.demo.service.ExpenseService;
+import com.example.demo.service.RuleService;
 /**
  * 
  * 費用精算申請の管理を担当するコントローラークラス
@@ -25,9 +26,11 @@ import com.example.demo.service.ExpenseService;
 public class AdminExpenseController {
 
 	private final ExpenseService expenseService;
+	private final RuleService ruleService;
 
-	public AdminExpenseController(ExpenseService expenseService) {
+	public AdminExpenseController(ExpenseService expenseService,RuleService ruleService) {
 		this.expenseService = expenseService;
+		this.ruleService = ruleService;
 	}
 	
 	/**
@@ -129,4 +132,5 @@ public class AdminExpenseController {
 
 	    return "adminTravelCost";
 	}
+	
 }
