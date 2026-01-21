@@ -80,7 +80,7 @@ public class AdminExpenseController {
 		}
 
 		expenseService.approveExpenses(id);
-		return "redirect:/admin/adminTravelCost";
+		return "redirect:/adminTravelCost";
 	}
 	
 	/**
@@ -101,7 +101,7 @@ public class AdminExpenseController {
 		}
 
 		expenseService.rejectExpenses(id);
-		return "redirect:/admin/adminTravelCost";
+		return "redirect:/adminTravelCost";
 	}
 	
 	/**
@@ -130,7 +130,7 @@ public class AdminExpenseController {
 	            Constants.RETURN_SIBMITT
 	    );
 
-	    return "redirect:/admin/adminTravelCost";
+	    return "redirect:/adminTravelCost";
 	}
 
 	

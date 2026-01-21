@@ -287,6 +287,17 @@ public class ExpenseService {
 	    expense.setReturnReason(null);
 	    expenseRepository.save(expense);
 	}
+	
+	/**
+	 * 申請IDから申請情報を取得する。
+	 *
+	 * @param expenseId 申請ID
+	 * @return 申請エンティティ（存在しない場合はnull）
+	 */
+	public Expense findById(Long expenseId) {
+	    return expenseRepository.findById(expenseId).orElse(null);
+	}
+
 
 
 }

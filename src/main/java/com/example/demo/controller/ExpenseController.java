@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -120,4 +121,36 @@ public class ExpenseController {
 
 		return "redirect:/travelCost";
 	}
+	
+	/**
+	 * 差戻し（RETURNED）された申請を再提出する。
+	 *
+	 * ・未ログインの場合はログイン画面へ遷移
+	 * ・対象申請が自分の申請でない場合は一覧へ戻す（不正操作対策）
+	 * ・RETURNED の場合のみ SUBMITTED へ戻す（Service側で制御）
+	 *
+	 * @param id      再提出対象の申請ID
+	 * @return 申請画面へのリダイレクト
+	 */
+	@PostMapping("/expenses/{id}/resubmit")
+	public String resubmit(@PathVariable("id") Long id) {
+
+	    // 未ログインの場合はログイン画面へリダイレクト
+	    User loginUser = (User) session.getAttribute("loginUser");
+	    if (loginUser == null) {
+	        return "redirect:/login";
+	    }
+
+	    // 対象申請が「自分の申請」かチェック（他人の申請を触れないようにする）
+	    Expense expense = expenseService.findById(id);
+	    if (expense == null || !expense.getUserId().equals(loginUser.getId())) {
+	        return "redirect:/travelCost";
+	    }
+
+	    // 再提出（RETURNED → SUBMITTED、returnReasonはクリア）
+	    expenseService.resubmitExpense(id);
+
+	    return "redirect:/travelCost";
+	}
+
 }

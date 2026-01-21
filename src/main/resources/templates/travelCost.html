@@ -128,9 +128,22 @@
       white-space: nowrap;
     }
 
+    .returned-note {
+      margin-top: 6px;
+      color: #ff6b6b;
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .btn-sm {
+      margin-top: 8px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
     .table-wrap { overflow-x: auto; }
 
-    /* 画面が狭い時は縦並び */
     @media (max-width: 720px) {
       .row { flex-direction: column; align-items: stretch; gap: 8px; }
       .label { width: auto; }
@@ -291,7 +304,20 @@
           <td th:text="${e.amount}"></td>
           <td th:text="${e.purpose}"></td>
           <td th:text="${e.note}"></td>
-          <td><span class="status" th:text="${e.status}"></span></td>
+
+          <td>
+            <span class="status" th:text="${e.status}"></span>
+
+            <div class="returned-note" th:if="${e.status == 'RETURNED'}">
+              差戻し理由：<span th:text="${e.returnReason}"></span>
+            </div>
+
+            <form th:if="${e.status == 'RETURNED'}"
+                  th:action="@{/expenses/{id}/resubmit(id=${e.id})}"
+                  method="post">
+              <button class="btn btn-primary btn-sm" type="submit">再提出</button>
+            </form>
+          </td>
         </tr>
         </tbody>
       </table>

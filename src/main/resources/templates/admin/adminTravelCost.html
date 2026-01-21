@@ -66,6 +66,14 @@
       font-weight: 700;
     }
 
+    /* 差戻しボタン用（見た目を承認/却下と区別） */
+    .btn-warn {
+      background: #f1c40f;
+      border-color: transparent;
+      font-weight: 700;
+      color: #2c2f4a;
+    }
+
     .search {
       margin-top: 12px;
       padding: 14px;
@@ -138,7 +146,6 @@
 <div class="wrap">
   <div class="card">
 
-    
     <div class="topbar">
       <div>
         <h1>申請一覧（管理者）</h1>
@@ -149,14 +156,13 @@
       </div>
 
       <div class="actions">
-		<a class="btn" th:href="@{/top}">管理者メニューへ</a>
-		<a class="btn" th:href="@{/admin/rules}">申請ルール管理</a>
+        <a class="btn" th:href="@{/top}">管理者メニューへ</a>
+        <a class="btn" th:href="@{/admin/rules}">申請ルール管理</a>
         <a class="btn" href="/travelCost">USER画面へ</a>
         <a class="btn btn-primary" href="/logout">ログアウト</a>
       </div>
     </div>
 
-   
     <div class="search">
       <form th:action="@{/adminTravelCost/search}"
             th:object="${searchForm}"
@@ -188,6 +194,7 @@
               <option value="SUBMITTED">SUBMITTED</option>
               <option value="APPROVED">APPROVED</option>
               <option value="REJECTED">REJECTED</option>
+              <option value="RETURNED">RETURNED</option>
             </select>
           </div>
 
@@ -209,7 +216,6 @@
       </form>
     </div>
 
-    
     <div th:if="${expenseList != null and !expenseList.isEmpty()}">
       <table>
         <thead>
@@ -236,7 +242,7 @@
           <td th:text="${e.userId}"></td>
 
           <td>
-            <div th:if="${e.status == 'SUBMITTED'}" style="display:flex; gap:6px;">
+            <div th:if="${e.status == 'SUBMITTED'}" style="display:flex; gap:6px; flex-wrap:wrap;">
               <form th:action="@{/admin/expenses/{id}/approve(id=${e.id})}"
                     method="post">
                 <button class="btn btn-primary" type="submit">承認</button>
@@ -246,7 +252,13 @@
                     method="post">
                 <button class="btn btn-danger" type="submit">却下</button>
               </form>
+
+              <form th:action="@{/admin/expenses/{id}/return(id=${e.id})}"
+                    method="post">
+                <button class="btn btn-warn" type="submit">差戻し</button>
+              </form>
             </div>
+
             <span th:if="${e.status != 'SUBMITTED'}">-</span>
           </td>
         </tr>
