@@ -15,7 +15,8 @@ import com.example.demo.entity.Expense;
 import com.example.demo.entity.User;
 import com.example.demo.form.AdminExpenseSearchForm;
 import com.example.demo.service.ExpenseService;
-import com.example.demo.service.RuleService;
+import com.example.demo.util.Constants;
+import com.example.demo.util.Roles;
 /**
  * 
  * 費用精算申請の管理を担当するコントローラークラス
@@ -26,11 +27,10 @@ import com.example.demo.service.RuleService;
 public class AdminExpenseController {
 
 	private final ExpenseService expenseService;
-	private final RuleService ruleService;
+	
 
-	public AdminExpenseController(ExpenseService expenseService,RuleService ruleService) {
+	public AdminExpenseController(ExpenseService expenseService) {
 		this.expenseService = expenseService;
-		this.ruleService = ruleService;
 	}
 	
 	/**
@@ -52,14 +52,15 @@ public class AdminExpenseController {
 			return "redirect:/login";
 		}
 
-		if (!"ADMIN".equals(loginUser.getRole())) {
+		if (!Roles.ADMIN.equals(loginUser.getRole())) {
 			return "redirect:/login";
 		}
 
 		model.addAttribute("searchForm",new AdminExpenseSearchForm());
 		model.addAttribute("expenseList", expenseService.findAllExpenses());
 
-		return "adminTravelCost";
+		return "admin/adminTravelCost";
+
 	}
 	/**
 	 * 指定された交通費申請を承認する。
@@ -74,12 +75,12 @@ public class AdminExpenseController {
 	@PostMapping("/admin/expenses/{id}/approve")
 	public String approve(@PathVariable("id") Long id, HttpSession session) {
 		User loginUser = (User) session.getAttribute("loginUser");
-		if (loginUser == null || !"ADMIN".equals(loginUser.getRole())) {
+		if (loginUser == null || !Roles.ADMIN.equals(loginUser.getRole())) {
 			return "redirect:/login";
 		}
 
 		expenseService.approveExpenses(id);
-		return "redirect:/adminTravelCost";
+		return "redirect:/admin/adminTravelCost";
 	}
 	
 	/**
@@ -95,13 +96,43 @@ public class AdminExpenseController {
 	@PostMapping("/admin/expenses/{id}/reject")
 	public String reject(@PathVariable("id") Long id, HttpSession session) {
 		User loginUser = (User) session.getAttribute("loginUser");
-		if (loginUser == null || !"ADMIN".equals(loginUser.getRole())) {
+		if (loginUser == null || !Roles.ADMIN.equals(loginUser.getRole())) {
 			return "redirect:/login";
 		}
 
 		expenseService.rejectExpenses(id);
-		return "redirect:/adminTravelCost";
+		return "redirect:/admin/adminTravelCost";
 	}
+	
+	/**
+	 * 指定された申請を差戻しする。
+	 *
+	 * 管理者のみ実行可能とし、
+	 * 未ログインまたは管理者以外の場合はログイン画面へ遷移する。
+	 *
+	 * @param id      差戻し対象の申請ID
+	 * @param session セッション情報
+	 * @return 管理者用申請一覧画面へのリダイレクト
+	 */
+	@PostMapping("/admin/expenses/{id}/return")
+	public String returnExpense(
+	        @PathVariable("id") Long id,
+	        HttpSession session) {
+
+	    User loginUser = (User) session.getAttribute("loginUser");
+	    if (loginUser == null || !Roles.ADMIN.equals(loginUser.getRole())) {
+	        return "redirect:/login";
+	    }
+
+	    // 今回は理由を固定文言で差戻し（ミニ版）
+	    expenseService.returnExpense(
+	            id,
+	            Constants.RETURN_SIBMITT
+	    );
+
+	    return "redirect:/admin/adminTravelCost";
+	}
+
 	
 	/**
 	 * 管理者用の交通費申請を検索する。
@@ -121,7 +152,7 @@ public class AdminExpenseController {
 	        Model model) {
 
 	    User loginUser = (User) session.getAttribute("loginUser");
-	    if (loginUser == null || !"ADMIN".equals(loginUser.getRole())) {
+	    if (loginUser == null || !Roles.ADMIN.equals(loginUser.getRole())) {
 	        return "redirect:/login";
 	    }
 
@@ -130,7 +161,8 @@ public class AdminExpenseController {
 
 	    model.addAttribute("expenseList", expenseList);
 
-	    return "adminTravelCost";
+	    return "admin/adminTravelCost";
+
 	}
 	
 }

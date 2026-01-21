@@ -10,4 +10,5 @@ public interface Constants {
 	public static final String SUBMIT_EXPENSE = "申請しました。";
 	public static final String REJISTER_USER = "ユーザーを登録しました。";
 
+	public static final String RETURN_SIBMITT = "内容を確認のうえ再提出してください。";
 }

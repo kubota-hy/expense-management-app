@@ -16,6 +16,7 @@ import com.example.demo.entity.User;
 import com.example.demo.form.AdminUserCreateForm;
 import com.example.demo.service.AdminUserService;
 import com.example.demo.util.Constants;
+import com.example.demo.util.Roles;
 
 @Controller
 @RequestMapping("/admin/users")
@@ -30,12 +31,13 @@ public class AdminUserController {
 	@GetMapping("/new")
 	public String showCreate(HttpSession session,Model model) {
 		User loginUser = (User)session.getAttribute("loginUser");
-		if(loginUser == null || !"ADMIN".equals(loginUser.getRole())) {
+		if(loginUser == null || !Roles.ADMIN.equals(loginUser.getRole())) {
 			return "redirect:/login";
 		}
 		
 		model.addAttribute("createForm",new AdminUserCreateForm());
-		return "adminUserNew";
+		return "admin/adminUserNew";
+
 	}
 	
 	@PostMapping
@@ -47,12 +49,13 @@ public class AdminUserController {
 	        RedirectAttributes ra) {
 
 	    User loginUser = (User) session.getAttribute("loginUser");
-	    if (loginUser == null || !"ADMIN".equals(loginUser.getRole())) {
+	    if (loginUser == null || !Roles.ADMIN.equals(loginUser.getRole())) {
 	        return "redirect:/login";
 	    }
 
 	    if (bindingResult.hasErrors()) {
-	        return "adminUserNew";
+	    	return "admin/adminUserNew";
+
 	    }
 
 	    try {
@@ -62,7 +65,8 @@ public class AdminUserController {
 	    } catch (IllegalArgumentException e) {
 	    	
 	        model.addAttribute("globalError", e.getMessage());
-	        return "adminUserNew";
+	        return "admin/adminUserNew";
+
 	        
 	    }
 	    

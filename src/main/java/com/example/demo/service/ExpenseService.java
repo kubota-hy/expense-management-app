@@ -14,6 +14,7 @@ import com.example.demo.repository.ExpenseRepository;
 import com.example.demo.rules.Decision;
 import com.example.demo.rules.RuleEngine;
 import com.example.demo.util.Constants;
+import com.example.demo.util.Statuses;
 
 /**
  * 交通費申請に関する業務処理を提供するサービスクラス。
@@ -112,11 +113,11 @@ public class ExpenseService {
 				.orElseThrow(() -> new IllegalArgumentException(Constants.ERROR02));
 
 		// SUBMITTEDステータスのみ変更対象とする
-		if (!"SUBMITTED".equals(expense.getStatus())) {
+		if (!Statuses.SUBMITTED.equals(expense.getStatus())) {
 			return;
 		}
 
-		expense.setStatus("APPROVED");
+		expense.setStatus(Statuses.APPROVED);
 		expenseRepository.save(expense);
 	}
 
@@ -134,11 +135,11 @@ public class ExpenseService {
 				.orElseThrow(() -> new IllegalArgumentException(Constants.ERROR02));
 
 		// SUBMITTEDステータスのみ変更対象とする
-		if (!"SUBMITTED".equals(expense.getStatus())) {
+		if (!Statuses.SUBMITTED.equals(expense.getStatus())) {
 			return;
 		}
 
-		expense.setStatus("REJECTED");
+		expense.setStatus(Statuses.REJECTED);
 		expenseRepository.save(expense);
 	}
 
@@ -193,9 +194,13 @@ public class ExpenseService {
 	 * @return 正規化された文字列、または null
 	 */
 	private String normalize(String s) {
+		
 		if(s == null) return null;
+		
 		String t = s.trim();
+		
 		return t.isEmpty() ? null: t;
+		
 	}
 
 	/**
@@ -208,7 +213,9 @@ public class ExpenseService {
 	 * @return LocalDateTime（当日 00:00）、または null
 	 */
 	private LocalDateTime parseStartOfDay(String yyyyMmDd) {
+		
 		if (yyyyMmDd == null || yyyyMmDd.isBlank()) return null;
+		
 		return LocalDate.parse(yyyyMmDd).atStartOfDay();
 	}
 
@@ -229,5 +236,57 @@ public class ExpenseService {
 		if (yyyyMmDd == null || yyyyMmDd.isBlank()) return null;
 		return LocalDate.parse(yyyyMmDd).plusDays(1).atStartOfDay();
 	}
+	/**
+	 * 指定された申請を差戻しする。
+	 *
+	 * ・申請が存在しない場合は例外
+	 * ・ステータスがSUBMITTEDの場合のみ、RETURNEDへ更新する
+	 * ・差戻し理由を保存する
+	 *
+	 * @param expenseId 差戻し対象の申請ID
+	 * @param reason 差戻し理由（空の場合はデフォルト文言を設定）
+	 */
+	public void returnExpense(Long expenseId,String reason) {
+		
+		Expense expense = expenseRepository.findById(expenseId)
+	            .orElseThrow(() -> new IllegalArgumentException(Constants.ERROR02));
+		
+		if(!Statuses.SUBMITTED.equals(expense.getStatus())) {
+			return;
+		}
+		
+		String r = (reason == null || reason.trim().isEmpty())
+				? Constants.RETURN_SIBMITT
+						: reason.trim();
+		
+		expense.setStatus(Statuses.RETURNED);
+		expense.setReturnReason(r);
+		expenseRepository.save(expense);
+	}
+	
+	/**
+	 * 指定された差戻し申請を再提出する。
+	 *
+	 * ・申請が存在しない場合は例外
+	 * ・ステータスがRETURNEDの場合のみ、SUBMITTEDへ戻す
+	 * ・差戻し理由はクリアする
+	 *
+	 * @param expenseId 再提出対象の申請ID
+	 * @throws IllegalArgumentException 申請が存在しない場合
+	 */
+	public void resubmitExpense(Long expenseId) {
+	    Expense expense = expenseRepository.findById(expenseId)
+	            .orElseThrow(() -> new IllegalArgumentException(Constants.ERROR02));
+
+	    // RETURNED のみ再提出対象
+	    if (!Statuses.RETURNED.equals(expense.getStatus())) {
+	        return;
+	    }
+
+	    expense.setStatus(Statuses.SUBMITTED);
+	    expense.setReturnReason(null);
+	    expenseRepository.save(expense);
+	}
+
 
 }

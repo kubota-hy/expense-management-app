@@ -59,6 +59,10 @@ public class Expense {
 
     @Column(name="submitted_at", nullable = false)
     private LocalDateTime submittedAt;
+    
+    @Column(name = "return_reason", length = 200)
+    private String returnReason;
+
 
     @PrePersist
     public void onCreate() {
